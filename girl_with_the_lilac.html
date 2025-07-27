@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для Ксюши</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Marck+Script&family=Montserrat:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            overflow: hidden;
+            perspective: 1000px;
+        }
+        
+        .card {
+            position: relative;
+            width: 90%;
+            max-width: 500px;
+            min-height: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 0 30px rgba(255, 105, 180, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            z-index: 10;
+            transition: transform 0.5s, box-shadow 0.5s;
+        }
+        
+        .message {
+            position: absolute;
+            width: 80%;
+            font-size: 20px;
+            font-weight: 500;
+            color: #d23669;
+            opacity: 0;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            will-change: transform, opacity;
+        }
+        
+        .initial {
+            font-size: 24px;
+            font-weight: 600;
+            animation: fadeInOut 11s forwards;
+        }
+        
+        .final-long {
+            font-size: 22px;
+            line-height: 1.5;
+            opacity: 0;
+            animation: fadeIn 2s forwards 31.6s, fadeOut 2s forwards 38.6s;
+            font-family: 'Marck Script', cursive;
+            color: #ff1493;
+        }
+        
+        .question {
+            font-size: 28px;
+            color: #ff4757;
+            opacity: 0;
+            animation: fadeIn 1s forwards 39.6s, pulse 2s infinite 40.6s;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .heart {
+            color: #ff4757;
+            display: inline-block;
+        }
+        
+        .floating-heart {
+            position: absolute;
+            font-size: 24px;
+            color: #ff4757;
+            pointer-events: none;
+            z-index: 20;
+            animation: floatHeart linear forwards;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+            filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.3));
+            opacity: 0.9;
+            will-change: transform;
+        }
+        
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .music-control:hover {
+            transform: scale(1.1);
+            background: rgba(255, 105, 180, 0.9);
+        }
+        
+        .music-control i {
+            font-size: 24px;
+            color: #ff4757;
+            transition: color 0.3s;
+        }
+        
+        .start-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,154,158,0.9) 0%, rgba(250,208,196,0.9) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            z-index: 1000;
+            font-size: 24px;
+            text-align: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .start-message h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .start-message p {
+            margin-bottom: 30px;
+            max-width: 80%;
+            line-height: 1.6;
+        }
+        
+        .start-button {
+            margin-top: 20px;
+            padding: 12px 35px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .start-button:hover {
+            background: #d23669;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 71, 87, 0.6);
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+            z-index: 100;
+            animation: confettiFall 5s linear forwards;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes diagonalFly {
+            0% { 
+                opacity: 0; 
+                transform: 
+                    translateX(var(--start-x))
+                    translateY(var(--start-y))
+                    rotate(var(--start-rotation));
+                filter: blur(5px);
+            }
+            10% { 
+                opacity: 1; 
+                filter: blur(0);
+            }
+            80% { 
+                opacity: 1; 
+            }
+            100% { 
+                opacity: 0; 
+                transform: 
+                    translateX(var(--end-x))
+                    translateY(var(--end-y))
+                    rotate(var(--end-rotation));
+            }
+        }
+        
+        @keyframes floatHeart {
+            0% {
+                transform: translate(var(--start-x), var(--start-y)) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: var(--heart-opacity);
+            }
+            90% {
+                opacity: var(--heart-opacity);
+            }
+            100% {
+                transform: 
+                    translate(var(--end-x), var(--end-y)) 
+                    rotate(var(--heart-rotation));
+                opacity: 0;
+            }
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <audio id="bgMusic" loop>
+        <source src="https://rus.hitmotop.com/get/music/20241123/CUPSIZE_-_celuyu_tebya_78613970.mp3" type="audio/mpeg">
+    </audio>
+    
+    <div class="start-message" id="startScreen">
+        <button class="start-button" id="startButton">Открыть послание</button>
+    </div>
+    
+    <div class="card" style="display: none;">
+        <div class="message initial">Ксюша, я так давно хотел тебе сказать...</div>
+        
+        <div class="message phrase" style="--start-x: -150%; --start-y: 120%; --end-x: 150%; --end-y: -120%; --start-rotation: -15deg; --end-rotation: 15deg;">Я люблю твои глаза</div>
+        <div class="message phrase" style="--start-x: 150%; --start-y: 120%; --end-x: -150%; --end-y: -120%; --start-rotation: 15deg; --end-rotation: -15deg;">Я люблю твою улыбку</div>
+        <div class="message phrase" style="--start-x: -120%; --start-y: 150%; --end-x: 120%; --end-y: -150%; --start-rotation: -10deg; --end-rotation: 10deg;">Я люблю твой голос</div>
+        <div class="message phrase" style="--start-x: 120%; --start-y: 150%; --end-x: -120%; --end-y: -150%; --start-rotation: 10deg; --end-rotation: -10deg;">Я люблю твой смех</div>
+        <div class="message phrase" style="--start-x: -150%; --start-y: 150%; --end-x: 150%; --end-y: -150%; --start-rotation: -20deg; --end-rotation: 20deg;">Я люблю каждую минуту с тобой</div>
+        <div class="message phrase" style="--start-x: 150%; --start-y: 150%; --end-x: -150%; --end-y: -150%; --start-rotation: 20deg; --end-rotation: -20deg;">Даже когда мы просто молчим</div>
+        <div class="message phrase" style="--start-x: -130%; --start-y: 130%; --end-x: 130%; --end-y: -130%; --start-rotation: -12deg; --end-rotation: 12deg;">Я люблю, как ты говоришь</div>
+        <div class="message phrase" style="--start-x: 130%; --start-y: 130%; --end-x: -130%; --end-y: -130%; --start-rotation: 12deg; --end-rotation: -12deg;">Как делишься своими мыслями</div>
+        <div class="message phrase" style="--start-x: -140%; --start-y: 140%; --end-x: 140%; --end-y: -140%; --start-rotation: -18deg; --end-rotation: 18deg;">Как слушаешь меня</div>
+        <div class="message phrase" style="--start-x: 140%; --start-y: 140%; --end-x: -140%; --end-y: -140%; --start-rotation: 18deg; --end-rotation: -18deg;">Ты не представляешь, как много ты для меня значишь</div>
+        <div class="message phrase" style="--start-x: -160%; --start-y: 110%; --end-x: 160%; --end-y: -110%; --start-rotation: -22deg; --end-rotation: 22deg;">Ты делаешь мой мир ярче</div>
+        <div class="message phrase" style="--start-x: 160%; --start-y: 110%; --end-x: -160%; --end-y: -110%; --start-rotation: 22deg; --end-rotation: -22deg;">С тобой я чувствую себя особенным</div>
+        <div class="message phrase" style="--start-x: -110%; --start-y: 160%; --end-x: 110%; --end-y: -160%; --start-rotation: -8deg; --end-rotation: 8deg;">Ты вдохновляешь меня</div>
+        <div class="message phrase" style="--start-x: 110%; --start-y: 160%; --end-x: -110%; --end-y: -160%; --start-rotation: 8deg; --end-rotation: -8deg;">Я скучаю по тебе каждую секунду</div>
+        <div class="message phrase" style="--start-x: -170%; --start-y: 130%; --end-x: 170%; --end-y: -130%; --start-rotation: -25deg; --end-rotation: 25deg;">Ты самая красивая</div>
+        <div class="message phrase" style="--start-x: 170%; --start-y: 130%; --end-x: -170%; --end-y: -130%; --start-rotation: 25deg; --end-rotation: -25deg;">Ты моя мечта</div>
+        <div class="message phrase" style="--start-x: -130%; --start-y: 170%; --end-x: 130%; --end-y: -170%; --start-rotation: -14deg; --end-rotation: 14deg;">Я благодарен за каждую встречу</div>
+        <div class="message phrase" style="--start-x: 130%; --start-y: 170%; --end-x: -130%; --end-y: -170%; --start-rotation: 14deg; --end-rotation: -14deg;">Ты самое дорогое</div>
+        <div class="message phrase" style="--start-x: -180%; --start-y: 140%; --end-x: 180%; --end-y: -140%; --start-rotation: -30deg; --end-rotation: 30deg;">Я хочу быть с тобой всегда</div>
+        <div class="message phrase" style="--start-x: 180%; --start-y: 140%; --end-x: -180%; --end-y: -140%; --start-rotation: 30deg; --end-rotation: -30deg;">Сейчас мое сердце бьется чаще</div>
+        <div class="message phrase" style="--start-x: -190%; --start-y: 100%; --end-x: 190%; --end-y: -100%; --start-rotation: -28deg; --end-rotation: 28deg;">Ты моя самая большая радость</div>
+        <div class="message phrase" style="--start-x: -100%; --start-y: 190%; --end-x: 100%; --end-y: -190%; --start-rotation: -5deg; --end-rotation: 5deg;">Ты наполняешь мою жизнь смыслом</div>
+        <div class="message phrase" style="--start-x: 100%; --start-y: 190%; --end-x: -100%; --end-y: -190%; --start-rotation: 5deg; --end-rotation: -5deg;">Я становлюсь лучше рядом с тобой</div>
+        <div class="message phrase" style="--start-x: 200%; --start-y: 150%; --end-x: -200%; --end-y: -150%; --start-rotation: 35deg; --end-rotation: -35deg;">Я горжусь тем, что ты в моей жизни</div>
+        <div class="message phrase" style="--start-x: -150%; --start-y: 200%; --end-x: 150%; --end-y: -200%; --start-rotation: -35deg; --end-rotation: 35deg;">Ты даришь мне эмоции</div>
+        <div class="message phrase" style="--start-x: 150%; --start-y: 200%; --end-x: -150%; --end-y: -200%; --start-rotation: 35deg; --end-rotation: -35deg;">Я люблю тебя больше, чем слова могут выразить</div>
+        <div class="message phrase" style="--start-x: -220%; --start-y: 120%; --end-x: 220%; --end-y: -120%; --start-rotation: -40deg; --end-rotation: 40deg;">Ты мой самый главный человек</div>
+        <div class="message phrase" style="--start-x: 220%; --start-y: 120%; --end-x: -220%; --end-y: -120%; --start-rotation: 40deg; --end-rotation: -40deg;">Я хочу просыпаться рядом с тобой</div>
+
+        <div class="message final-long">Ты — моё счастье, моя жизнь.<br>Без тебя всё пусто, а с тобой даже самый трудный день становится светлее.</div>
+        <div class="message question">Будешь ли ты моей девушкой?</div>
+    </div>
+
+    <div class="music-control" id="musicBtn" style="display: none;">
+        <i class="fas fa-music"></i>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const music = document.getElementById('bgMusic');
+            const musicBtn = document.getElementById('musicBtn');
+            const startScreen = document.getElementById('startScreen');
+            const startButton = document.getElementById('startButton');
+            const card = document.querySelector('.card');
+            
+            // Настройка громкости
+            music.volume = 0.5;
+            
+            // Флаг для отслеживания первого клика
+            let isFirstClick = true;
+            
+            // Обработчик кнопки старта
+            startButton.addEventListener('click', function() {
+                if (!isFirstClick) return;
+                isFirstClick = false;
+                
+                startScreen.style.display = 'none';
+                card.style.display = 'flex';
+                musicBtn.style.display = 'flex';
+                
+                // Пытаемся запустить музыку
+                const playPromise = music.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                        musicBtn.innerHTML = '<i class="fas fa-music"></i>';
+                    })
+                    .catch(error => {
+                        musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                        document.body.addEventListener('click', enableAudio, { once: true });
+                    });
+                }
+                
+                startAnimations();
+            });
+            
+            function enableAudio() {
+                music.play();
+                musicBtn.innerHTML = '<i class="fas fa-music"></i>';
+            }
+            
+            musicBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (music.paused) {
+                    music.play();
+                    musicBtn.innerHTML = '<i class="fas fa-music"></i>';
+                } else {
+                    music.pause();
+                    musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                }
+            });
+            
+            function createHearts() {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerHTML = '❤';
+                
+                const cardWidth = card.offsetWidth;
+                const cardHeight = card.offsetHeight;
+                const cardLeft = card.offsetLeft;
+                const cardTop = card.offsetTop;
+                
+                const startX = Math.random() * cardWidth * 0.8 + cardWidth * 0.1;
+                const startY = cardHeight;
+                const endX = startX + (Math.random() - 0.5) * cardWidth * 0.4;
+                const endY = -30;
+                const rotation = (Math.random() - 0.5) * 180;
+                const duration = 3 + Math.random() * 2;
+                const size = 20 + Math.random() * 30;
+                const opacity = 0.7 + Math.random() * 0.3;
+                
+                heart.style.left = `${cardLeft + startX}px`;
+                heart.style.top = `${cardTop + startY}px`;
+                heart.style.fontSize = `${size}px`;
+                heart.style.setProperty('--start-x', '0px');
+                heart.style.setProperty('--start-y', '0px');
+                heart.style.setProperty('--end-x', `${endX - startX}px`);
+                heart.style.setProperty('--end-y', `${endY - startY}px`);
+                heart.style.setProperty('--heart-rotation', `${rotation}deg`);
+                heart.style.setProperty('--heart-opacity', opacity);
+                heart.style.animationDuration = `${duration}s`;
+                
+                document.body.appendChild(heart);
+                
+                setTimeout(() => {
+                    heart.remove();
+                }, duration * 1000);
+            }
+            
+            function startAnimations() {
+                const phrases = document.querySelectorAll('.phrase');
+                const phraseDuration = 2.75;
+                const phraseInterval = 700;
+                const initialDuration = 11000;
+                
+                phrases.forEach((phrase, index) => {
+                    setTimeout(() => {
+                        phrase.style.animation = `diagonalFly ${phraseDuration}s linear forwards`;
+                        
+                        setTimeout(() => {
+                            phrase.remove();
+                        }, phraseDuration * 1000);
+                    }, initialDuration + index * phraseInterval);
+                });
+                
+                setTimeout(() => {
+                    document.querySelector('.initial').remove();
+                }, initialDuration);
+                
+                const finalTextTime = initialDuration + phrases.length * phraseInterval + 5000;
+                const questionTime = finalTextTime + 5000;
+                const heartsTime = questionTime + 500;
+                
+                setTimeout(() => {
+                    createHearts();
+                    setInterval(createHearts, 600);
+                }, heartsTime);
+            }
+        });
+    </script>
+</body>
+</html>
